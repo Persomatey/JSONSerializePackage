@@ -1,6 +1,8 @@
 # JSON Serializer Package 
 <i>A JSON serializer package for Unity which supports reading from and writing to JSON files</i>
 
+Check out [releases](https://github.com/Persomatey/JSONSerializePackage/releases) to download the unity package. 
+
 <img src="https://raw.githubusercontent.com/Persomatey/JSONSerializerPlugin/main/Logo/JSONSerializerPluginLogo.png" width="318"/>
 
 <details>
