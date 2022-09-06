@@ -1,5 +1,5 @@
-# JSON Serializer Plugin 
-<i>A JSON serializer plugin for Unity which supports reading from and writing to JSON files</i>
+# JSON Serializer Package 
+<i>A JSON serializer package for Unity which supports reading from and writing to JSON files</i>
 
 <img src="https://raw.githubusercontent.com/Persomatey/JSONSerializerPlugin/main/Logo/JSONSerializerPluginLogo.png" width="318"/>
 
