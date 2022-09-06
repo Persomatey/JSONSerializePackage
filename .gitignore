@@ -24,6 +24,7 @@ ExportedObj/
 *.svd
 *.pdb
 *.opendb
+*.log
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -38,3 +39,4 @@ sysinfo.txt
 
 # For the mac guys
 *.DS_Store
+JSONSerializerPlugin/Logs
