@@ -5,6 +5,8 @@ Check out [releases](https://github.com/Persomatey/JSONSerializePackage/releases
 
 <img src="https://raw.githubusercontent.com/Persomatey/JSONSerializerPlugin/main/Logo/JSONSerializerPluginLogo.png" width="318"/>
 
+## Details 
+
 <details>
 <summary>Example Scene Explanation</summary>
 <blockquote>
