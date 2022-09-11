@@ -7,33 +7,36 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class JSONTester : MonoBehaviour
+namespace JSONSerializerPackage
 {
-	[Header("Files")]
-	[SerializeField] TextAsset readFile;
-	[SerializeField] TextAsset writeFile; 
-
-	public void ReadExample()
+	public class JSONTester : MonoBehaviour
 	{
-		JSON readJSON = new JSON(readFile); 
+		[Header("Files")]
+		[SerializeField] TextAsset readFile;
+		[SerializeField] TextAsset writeFile;
 
-		Debug.Log($"Data read from {readFile.name}.json:\n" + readJSON.ToString()); 
-	}
+		public void ReadExample()
+		{
+			JSON readJSON = new JSON(readFile);
 
-	public void WriteExample()
-	{
-		JSON writeJSON = new JSON(); 
+			Debug.Log($"Data read from {readFile.name}.json:\n" + readJSON.ToString());
+		}
 
-		writeJSON.AddBool("myBool", false); 
-		writeJSON.AddInt("myInt", 987); 
-		writeJSON.AddFloat("myFloat", 654.321f); 
-		writeJSON.AddString("myStr", "What's up, World!");
+		public void WriteExample()
+		{
+			JSON writeJSON = new JSON();
 
-		writeJSON.WriteToFile(); 
-	}
+			writeJSON.AddBool("myBool", false);
+			writeJSON.AddInt("myInt", 987);
+			writeJSON.AddFloat("myFloat", 654.321f);
+			writeJSON.AddString("myStr", "What's up, World!");
 
-	public void LabelFiller(TextAsset file)
-	{
-		GameObject.Find("JSONReadout").GetComponent<Text>().text = $"{file.text}"; 
+			writeJSON.WriteToFile();
+		}
+
+		public void LabelFiller(TextAsset file)
+		{
+			GameObject.Find("JSONReadout").GetComponent<Text>().text = $"{file.text}";
+		}
 	}
 }

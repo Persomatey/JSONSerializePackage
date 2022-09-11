@@ -10,309 +10,311 @@ using UnityEngine;
 using System.IO;
 using UnityEditor;
 
-// The JSON itself 
-[System.Serializable]
-public class JSON
+namespace JSONSerializerPackage
 {
-	List<JSONBoolean> boolList;
-	List<JSONInteger> intList; 
-	List<JSONFloat> floatList; 
-	List<JSONString> stringList;
-
-	TextAsset jsonFile; 
-
-	public JSON() 
+	[Serializable]
+	public class JSON
 	{
-		boolList = new List<JSONBoolean>(); 
-		intList = new List<JSONInteger>(); 
-		floatList = new List<JSONFloat>(); 
-		stringList = new List<JSONString>(); 
-	} 
+		List<JSONBoolean> boolList;
+		List<JSONInteger> intList;
+		List<JSONFloat> floatList;
+		List<JSONString> stringList;
 
-	public JSON(TextAsset jsonFile)
-	{
-		boolList = new List<JSONBoolean>();
-		intList = new List<JSONInteger>();
-		floatList = new List<JSONFloat>();
-		stringList = new List<JSONString>();
-		this.jsonFile = jsonFile;
+		TextAsset jsonFile;
 
-		ParseJSON(jsonFile); 
-	}
-
-	public override string ToString()
-	{
-		List<string> list = new List<string>();
-
-		// Print bools 
-		for (int i = 0; i < boolList.Count; i++)
+		public JSON()
 		{
-			list.Add($"    \"{boolList[i].name}\": {boolList[i].value.ToString().ToLower()}");
+			boolList = new List<JSONBoolean>();
+			intList = new List<JSONInteger>();
+			floatList = new List<JSONFloat>();
+			stringList = new List<JSONString>();
 		}
 
-		// Print ints 
-		for (int i = 0; i < intList.Count; i++)
+		public JSON(TextAsset jsonFile)
 		{
-			list.Add($"    \"{intList[i].name}\": {intList[i].value}");
+			boolList = new List<JSONBoolean>();
+			intList = new List<JSONInteger>();
+			floatList = new List<JSONFloat>();
+			stringList = new List<JSONString>();
+			this.jsonFile = jsonFile;
+
+			ParseJSON(jsonFile);
 		}
 
-		// Print floats 
-		for (int i = 0; i < floatList.Count; i++)
+		public override string ToString()
 		{
-			list.Add($"    \"{floatList[i].name}\": {floatList[i].value}");
-		}
+			List<string> list = new List<string>();
 
-		// Print strings 
-		for (int i = 0; i < stringList.Count; i++)
-		{
-			list.Add($"    \"{stringList[i].name}\": \"{stringList[i].value}\"");
-		}
-
-		// Make string 
-		string str = "{\n";
-
-		for (int i = 0; i < list.Count; i++)
-		{
-			str += (i == list.Count - 1) ? list[i] + "\n" : list[i] + ",\n";
-		}
-
-		str += "}"; 
-		
-		return str; 
-	}
-
-	void ParseJSON(TextAsset jsonFile)
-	{
-		boolList = new List<JSONBoolean>();
-		intList = new List<JSONInteger>();
-		floatList = new List<JSONFloat>();
-		stringList = new List<JSONString>();
-		this.jsonFile = jsonFile;
-
-		string[] lines = jsonFile.text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-		lines[lines.Length - 2] = (lines[lines.Length - 2].EndsWith(",")) ? lines[lines.Length - 2] : lines[lines.Length - 2] + ",";
-
-		for (int i = 1; i < lines.Length - 1; i++)
-		{
-			string[] lineSplit = lines[i].Split(new string[] { ":" }, StringSplitOptions.None);
-			lineSplit[0] = lineSplit[0].Replace("    \"", "");
-			lineSplit[0] = lineSplit[0].Replace("\"", "");
-			lineSplit[1] = lineSplit[1].Substring(1, lineSplit[1].Length - 2);
-
-			// If it's a boolean
-			if (lineSplit[1] == "true" || lineSplit[1] == "false")
+			// Print bools 
+			for (int i = 0; i < boolList.Count; i++)
 			{
-				AddBool(lineSplit[0], Convert.ToBoolean(lineSplit[1]));
+				list.Add($"    \"{boolList[i].name}\": {boolList[i].value.ToString().ToLower()}");
 			}
 
-			// If it's an int 
-			if (int.TryParse(lineSplit[1], out int num))
+			// Print ints 
+			for (int i = 0; i < intList.Count; i++)
 			{
-				AddInt(lineSplit[0], num);
+				list.Add($"    \"{intList[i].name}\": {intList[i].value}");
 			}
 
-			// If it's a float 
-			if (lineSplit[1].Contains(".") && float.TryParse(lineSplit[1], out float fl))
+			// Print floats 
+			for (int i = 0; i < floatList.Count; i++)
 			{
-				AddFloat(lineSplit[0], fl);
+				list.Add($"    \"{floatList[i].name}\": {floatList[i].value}");
 			}
 
-			// If it's a string 
-			if (lineSplit[1].StartsWith("\""))
+			// Print strings 
+			for (int i = 0; i < stringList.Count; i++)
 			{
-				lineSplit[1] = lineSplit[1].Replace("\"", "");
-				AddString(lineSplit[0], lineSplit[1]);
+				list.Add($"    \"{stringList[i].name}\": \"{stringList[i].value}\"");
 			}
+
+			// Make string 
+			string str = "{\n";
+
+			for (int i = 0; i < list.Count; i++)
+			{
+				str += (i == list.Count - 1) ? list[i] + "\n" : list[i] + ",\n";
+			}
+
+			str += "}";
+
+			return str;
 		}
-	}
 
-	public void WriteToFile()
-	{
-		File.WriteAllText(AssetDatabase.GetAssetPath(jsonFile), ToString());
-		EditorUtility.SetDirty(jsonFile);
-	}
-
-	#region Add Functions 
-
-	public void AddBool(string newItemName, bool newItemValue)
-	{
-		boolList.Add( new JSONBoolean(newItemName, newItemValue) ); 
-	}
-
-	public void AddInt(string newItemName, int newItemValue)
-	{
-		intList.Add( new JSONInteger(newItemName, newItemValue) ); 
-	}
-
-	public void AddFloat(string newItemName, float newItemValue)
-	{
-		floatList.Add( new JSONFloat(newItemName, newItemValue) ); 
-	}
-
-	public void AddString(string newItemName, string newItemValue)
-	{
-		stringList.Add( new JSONString(newItemName, newItemValue) ); 
-	}
-
-	#endregion Add Functions 
-
-	#region Get Funcitons
-
-	public bool GetBool(string variableName)
-	{
-		bool found = false;
-		bool ret = false;
-
-		for (int i = 0; i < intList.Count; i++)
+		void ParseJSON(TextAsset jsonFile)
 		{
-			if (intList[i].name == variableName)
+			boolList = new List<JSONBoolean>();
+			intList = new List<JSONInteger>();
+			floatList = new List<JSONFloat>();
+			stringList = new List<JSONString>();
+			this.jsonFile = jsonFile;
+
+			string[] lines = jsonFile.text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+			lines[lines.Length - 2] = (lines[lines.Length - 2].EndsWith(",")) ? lines[lines.Length - 2] : lines[lines.Length - 2] + ",";
+
+			for (int i = 1; i < lines.Length - 1; i++)
 			{
-				found = true;
-				ret = boolList[i].value;
+				string[] lineSplit = lines[i].Split(new string[] { ":" }, StringSplitOptions.None);
+				lineSplit[0] = lineSplit[0].Replace("    \"", "");
+				lineSplit[0] = lineSplit[0].Replace("\"", "");
+				lineSplit[1] = lineSplit[1].Substring(1, lineSplit[1].Length - 2);
+
+				// If it's a boolean
+				if (lineSplit[1] == "true" || lineSplit[1] == "false")
+				{
+					AddBool(lineSplit[0], Convert.ToBoolean(lineSplit[1]));
+				}
+
+				// If it's an int 
+				if (int.TryParse(lineSplit[1], out int num))
+				{
+					AddInt(lineSplit[0], num);
+				}
+
+				// If it's a float 
+				if (lineSplit[1].Contains(".") && float.TryParse(lineSplit[1], out float fl))
+				{
+					AddFloat(lineSplit[0], fl);
+				}
+
+				// If it's a string 
+				if (lineSplit[1].StartsWith("\""))
+				{
+					lineSplit[1] = lineSplit[1].Replace("\"", "");
+					AddString(lineSplit[0], lineSplit[1]);
+				}
 			}
 		}
 
-		if (found)
+		public void WriteToFile()
 		{
-			return ret;
+			File.WriteAllText(AssetDatabase.GetAssetPath(jsonFile), ToString());
+			EditorUtility.SetDirty(jsonFile);
 		}
-		else
+
+		#region Add Functions 
+
+		public void AddBool(string newItemName, bool newItemValue)
 		{
-			Debug.LogError($"ERROR: No variable names {variableName} found! returning 'false' instead");
-			return false;
+			boolList.Add(new JSONBoolean(newItemName, newItemValue));
 		}
-	}
 
-	public int GetInt(string variableName)
-	{
-		bool found = false;
-		int ret = 0;
-
-		for (int i = 0; i < intList.Count; i++)
+		public void AddInt(string newItemName, int newItemValue)
 		{
-			if (intList[i].name == variableName)
+			intList.Add(new JSONInteger(newItemName, newItemValue));
+		}
+
+		public void AddFloat(string newItemName, float newItemValue)
+		{
+			floatList.Add(new JSONFloat(newItemName, newItemValue));
+		}
+
+		public void AddString(string newItemName, string newItemValue)
+		{
+			stringList.Add(new JSONString(newItemName, newItemValue));
+		}
+
+		#endregion Add Functions 
+
+		#region Get Funcitons
+
+		public bool GetBool(string variableName)
+		{
+			bool found = false;
+			bool ret = false;
+
+			for (int i = 0; i < intList.Count; i++)
 			{
-				found = true;
-				ret = intList[i].value;
+				if (intList[i].name == variableName)
+				{
+					found = true;
+					ret = boolList[i].value;
+				}
+			}
+
+			if (found)
+			{
+				return ret;
+			}
+			else
+			{
+				Debug.LogError($"ERROR: No variable names {variableName} found! returning 'false' instead");
+				return false;
 			}
 		}
 
-		if (found)
+		public int GetInt(string variableName)
 		{
-			return ret;
-		}
-		else
-		{
-			Debug.LogError($"ERROR: No variable names {variableName} found! returning '0' instead");
-			return 0;
-		}
-	}
+			bool found = false;
+			int ret = 0;
 
-	public float GetFloat(string variableName)
-	{
-		bool found = false;
-		float ret = 0.0f;
-
-		for (int i = 0; i < intList.Count; i++)
-		{
-			if (intList[i].name == variableName)
+			for (int i = 0; i < intList.Count; i++)
 			{
-				found = true;
-				ret = floatList[i].value;
+				if (intList[i].name == variableName)
+				{
+					found = true;
+					ret = intList[i].value;
+				}
+			}
+
+			if (found)
+			{
+				return ret;
+			}
+			else
+			{
+				Debug.LogError($"ERROR: No variable names {variableName} found! returning '0' instead");
+				return 0;
 			}
 		}
 
-		if (found)
+		public float GetFloat(string variableName)
 		{
-			return ret;
-		}
-		else
-		{
-			Debug.LogError($"ERROR: No variable names '{variableName}' found! returning '0.0f' instead");
-			return 0.0f;
-		}
-	}
+			bool found = false;
+			float ret = 0.0f;
 
-	public string GetString(string variableName)
-	{
-		bool found = false;
-		string ret = null;
-
-		for (int i = 0; i < intList.Count; i++)
-		{
-			if (intList[i].name == variableName)
+			for (int i = 0; i < intList.Count; i++)
 			{
-				found = true;
-				ret = stringList[i].value;
+				if (intList[i].name == variableName)
+				{
+					found = true;
+					ret = floatList[i].value;
+				}
+			}
+
+			if (found)
+			{
+				return ret;
+			}
+			else
+			{
+				Debug.LogError($"ERROR: No variable names '{variableName}' found! returning '0.0f' instead");
+				return 0.0f;
 			}
 		}
 
-		if (found)
+		public string GetString(string variableName)
 		{
-			return ret;
+			bool found = false;
+			string ret = null;
+
+			for (int i = 0; i < intList.Count; i++)
+			{
+				if (intList[i].name == variableName)
+				{
+					found = true;
+					ret = stringList[i].value;
+				}
+			}
+
+			if (found)
+			{
+				return ret;
+			}
+			else
+			{
+				Debug.LogError($"ERROR: No variable names '{variableName}' found! returning NULL instead");
+				return null;
+			}
 		}
-		else
+
+		#endregion Get Functions 
+	}
+
+	#region JSON Variables
+
+	[System.Serializable]
+	public class JSONBoolean
+	{
+		public string name;
+		public bool value;
+
+		public JSONBoolean(string name, bool value)
 		{
-			Debug.LogError($"ERROR: No variable names '{variableName}' found! returning NULL instead");
-			return null;
+			this.name = name;
+			this.value = value;
 		}
 	}
 
-	#endregion Get Functions 
+	[System.Serializable]
+	public class JSONInteger
+	{
+		public string name;
+		public int value;
+
+		public JSONInteger(string name, int value)
+		{
+			this.name = name;
+			this.value = value;
+		}
+	}
+
+	[System.Serializable]
+	public class JSONFloat
+	{
+		public string name;
+		public float value;
+
+		public JSONFloat(string name, float value)
+		{
+			this.name = name;
+			this.value = value;
+		}
+	}
+
+	[System.Serializable]
+	public class JSONString
+	{
+		public string name;
+		public string value;
+
+		public JSONString(string name, string value)
+		{
+			this.name = name;
+			this.value = value;
+		}
+	}
+
+	#endregion JSON Variables 
 }
-
-#region JSON Variables
-
-[System.Serializable]
-public class JSONBoolean
-{
-	public string name;
-	public bool value;
-
-	public JSONBoolean(string name, bool value)
-	{
-		this.name = name;
-		this.value = value;
-	}
-}
-
-[System.Serializable]
-public class JSONInteger
-{
-	public string name;
-	public int value;
-
-	public JSONInteger(string name, int value)
-	{
-		this.name = name;
-		this.value = value;
-	}
-}
-
-[System.Serializable]
-public class JSONFloat
-{
-	public string name;
-	public float value;
-
-	public JSONFloat(string name, float value)
-	{
-		this.name = name;
-		this.value = value;
-	}
-}
-
-[System.Serializable]
-public class JSONString
-{
-	public string name;
-	public string value;
-
-	public JSONString(string name, string value)
-	{
-		this.name = name;
-		this.value = value;
-	}
-}
-
-#endregion JSON Variables 
