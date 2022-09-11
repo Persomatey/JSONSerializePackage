@@ -1,7 +1,7 @@
 /*
  * Programmer: Hunter Goodin 
  * Date Created: 09/11/2022 @ 1:00 PM
- * Description: This class is the JSON object that gets written 
+ * Description: This class holds the data of the json object and controls the serializing of that object. 
  */
 
 using System;

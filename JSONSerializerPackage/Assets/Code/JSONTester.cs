@@ -1,7 +1,7 @@
 /*
  * Programmer: Hunter Goodin 
  * Date Created: 09/11/2022 @ 3:30 PM 
- * Description: An example script showing how you can use this plugin to read from and write to provided .json files 
+ * Description: An example script showing how you can use this package to read from and write to provided .json files.m 
  */
 
 using UnityEngine;
