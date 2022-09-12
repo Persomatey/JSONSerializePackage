@@ -27,10 +27,12 @@ namespace JSON
 		{
 			JSON writeJSON = new JSON();
 
-			writeJSON.AddBool("myBool", false);
+			writeJSON.AddBool("myBool", true);
 			writeJSON.AddInt("myInt", 987);
 			writeJSON.AddFloat("myFloat", 654.321f);
 			writeJSON.AddString("myStr", "What's up, World!");
+
+			writeJSON.SetBool("myBool", false);
 
 			writeJSON.WriteToFile(writeFile);
 		}
