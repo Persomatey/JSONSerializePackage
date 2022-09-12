@@ -1,4 +1,4 @@
-# JSON Serializer Plugin 
+# Unity JSON Serializer Plugin 
 <i>A JSON serializer plugin for Unity which supports reading from and writing to JSON files. </i>
 
 Check out [releases](https://github.com/Persomatey/JSONSerializerPlugin/releases) to download the unity package. 
