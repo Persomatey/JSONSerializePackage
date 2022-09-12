@@ -10,7 +10,7 @@ using UnityEngine;
 using System.IO;
 using UnityEditor;
 
-namespace JSONSerializerPackage
+namespace JSON
 {
 	[Serializable]
 	public class JSON
@@ -20,7 +20,7 @@ namespace JSONSerializerPackage
 		List<JSONFloat> floatList;
 		List<JSONString> stringList;
 
-		TextAsset jsonFile;
+		TextAsset jsonFile = null;
 
 		public JSON()
 		{
@@ -97,6 +97,7 @@ namespace JSONSerializerPackage
 			{
 				string[] lineSplit = lines[i].Split(new string[] { ":" }, StringSplitOptions.None);
 				lineSplit[0] = lineSplit[0].Replace("    \"", "");
+				lineSplit[0] = lineSplit[0].Replace("\t", "");
 				lineSplit[0] = lineSplit[0].Replace("\"", "");
 				lineSplit[1] = lineSplit[1].Substring(1, lineSplit[1].Length - 2);
 
@@ -129,33 +130,27 @@ namespace JSONSerializerPackage
 
 		public void WriteToFile()
 		{
+			if (jsonFile == null)
+			{
+				Debug.LogError("ERROR: JSON TextAsset file never set!"); 
+				return; 
+			}
+
 			File.WriteAllText(AssetDatabase.GetAssetPath(jsonFile), ToString());
 			EditorUtility.SetDirty(jsonFile);
 		}
 
-		#region Add Functions 
-
-		public void AddBool(string newItemName, bool newItemValue)
+		public void WriteToFile(TextAsset jsonFile)
 		{
-			boolList.Add(new JSONBoolean(newItemName, newItemValue));
-		}
+			if (jsonFile != null)
+			{
+				Debug.LogError($"ERROR: Object already has a JSON TextAsset file: '{jsonFile.name}.json'"); 
+				return;
+			}
 
-		public void AddInt(string newItemName, int newItemValue)
-		{
-			intList.Add(new JSONInteger(newItemName, newItemValue));
+			File.WriteAllText(AssetDatabase.GetAssetPath(jsonFile), ToString());
+			EditorUtility.SetDirty(jsonFile);
 		}
-
-		public void AddFloat(string newItemName, float newItemValue)
-		{
-			floatList.Add(new JSONFloat(newItemName, newItemValue));
-		}
-
-		public void AddString(string newItemName, string newItemValue)
-		{
-			stringList.Add(new JSONString(newItemName, newItemValue));
-		}
-
-		#endregion Add Functions 
 
 		#region Get Funcitons
 
@@ -164,9 +159,9 @@ namespace JSONSerializerPackage
 			bool found = false;
 			bool ret = false;
 
-			for (int i = 0; i < intList.Count; i++)
+			for (int i = 0; i < boolList.Count; i++)
 			{
-				if (intList[i].name == variableName)
+				if (boolList[i].name == variableName)
 				{
 					found = true;
 					ret = boolList[i].value;
@@ -214,9 +209,9 @@ namespace JSONSerializerPackage
 			bool found = false;
 			float ret = 0.0f;
 
-			for (int i = 0; i < intList.Count; i++)
+			for (int i = 0; i < floatList.Count; i++)
 			{
-				if (intList[i].name == variableName)
+				if (floatList[i].name == variableName)
 				{
 					found = true;
 					ret = floatList[i].value;
@@ -239,9 +234,9 @@ namespace JSONSerializerPackage
 			bool found = false;
 			string ret = null;
 
-			for (int i = 0; i < intList.Count; i++)
+			for (int i = 0; i < stringList.Count; i++)
 			{
-				if (intList[i].name == variableName)
+				if (stringList[i].name == variableName)
 				{
 					found = true;
 					ret = stringList[i].value;
@@ -260,6 +255,111 @@ namespace JSONSerializerPackage
 		}
 
 		#endregion Get Functions 
+
+		#region Set Funcitons
+
+		public void SetBool(string variableName, bool newBool)
+		{
+			bool found = false;
+
+			for (int i = 0; i < boolList.Count; i++)
+			{
+				if (boolList[i].name == variableName)
+				{
+					found = true;
+					boolList[i].value = newBool;
+				}
+			}
+
+			if (!found)
+			{
+				Debug.LogError($"ERROR: No variable names {variableName} found!");
+			}
+		}
+
+		public void SetInt(string variableName, int newInt)
+		{
+			bool found = false;
+
+			for (int i = 0; i < intList.Count; i++)
+			{
+				if (intList[i].name == variableName)
+				{
+					found = true;
+					intList[i].value = newInt;
+				}
+			}
+
+			if (!found)
+			{
+				Debug.LogError($"ERROR: No variable names {variableName} found!");
+			}
+		}
+
+		public void SetFloat(string variableName, float newFloat)
+		{
+			bool found = false;
+
+			for (int i = 0; i < floatList.Count; i++)
+			{
+				if (floatList[i].name == variableName)
+				{
+					found = true;
+					floatList[i].value = newFloat;
+				}
+			}
+
+			if (!found)
+			{
+				Debug.LogError($"ERROR: No variable names {variableName} found!");
+			}
+		}
+
+		public void SetString(string variableName, string newString)
+		{
+			bool found = false;
+
+			for (int i = 0; i < stringList.Count; i++)
+			{
+				if (stringList[i].name == variableName)
+				{
+					found = true;
+					stringList[i].value = newString;
+				}
+			}
+
+			if (!found)
+			{
+				Debug.LogError($"ERROR: No variable names {variableName} found!");
+			}
+		}
+
+		#endregion Get Functions 
+
+		#region Add Functions 
+
+		public void AddBool(string newItemName, bool newItemValue)
+		{
+			boolList.Add(new JSONBoolean(newItemName, newItemValue));
+		}
+
+		public void AddInt(string newItemName, int newItemValue)
+		{
+			intList.Add(new JSONInteger(newItemName, newItemValue));
+		}
+
+		public void AddFloat(string newItemName, float newItemValue)
+		{
+			floatList.Add(new JSONFloat(newItemName, newItemValue));
+		}
+
+		public void AddString(string newItemName, string newItemValue)
+		{
+			stringList.Add(new JSONString(newItemName, newItemValue));
+		}
+
+		#endregion Add Functions 
+
 	}
 
 	#region JSON Variables

@@ -7,7 +7,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace JSONSerializerPackage
+namespace JSON 
 {
 	public class JSONTester : MonoBehaviour
 	{
@@ -20,6 +20,7 @@ namespace JSONSerializerPackage
 			JSON readJSON = new JSON(readFile);
 
 			Debug.Log($"Data read from {readFile.name}.json:\n" + readJSON.ToString());
+			Debug.Log($"Read myStr: {readJSON.GetString("myStr")}"); 
 		}
 
 		public void WriteExample()
@@ -31,7 +32,7 @@ namespace JSONSerializerPackage
 			writeJSON.AddFloat("myFloat", 654.321f);
 			writeJSON.AddString("myStr", "What's up, World!");
 
-			writeJSON.WriteToFile();
+			writeJSON.WriteToFile(writeFile);
 		}
 
 		public void LabelFiller(TextAsset file)

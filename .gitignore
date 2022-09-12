@@ -40,3 +40,4 @@ sysinfo.txt
 # For the mac guys
 *.DS_Store
 JSONSerializerPlugin/Logs
+JSONSerializerPackage/Logs
