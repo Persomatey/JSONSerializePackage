@@ -3,7 +3,7 @@
 
 Check out [releases](https://github.com/Persomatey/JSONSerializerPlugin/releases) to download the unity package. 
 
-<img src="https://raw.githubusercontent.com/Persomatey/JSONSerializerPlugin/main/Logo/JSONSerializerPluginLogo.png" width="318"/>
+<img src="https://raw.githubusercontent.com/Persomatey/UnityJSONSerializerPlugin/main/Logo/JSONSerializerPluginLogo.png" width="318"/>
 
 ## Tutorial 
 <details>
