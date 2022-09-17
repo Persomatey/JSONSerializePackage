@@ -41,7 +41,7 @@ If no parameter was provided when object was created, you'll need to include the
 writeJSON.WriteToFile(file);
 ```
 ---
-### Reading and writing JSON variables  
+### Reading, writing, and removing JSON variables  
 To read a specific variable (`GetBool`, `GetInt`, `GetFloat`, `GetString`): 
 ```
 myJSON.GetString("myStr"); 
@@ -53,6 +53,10 @@ myJSON.SetInt("myInt", 246);
 To add a variable to the JSON (`AddBool`, `AddInt`, `AddFloat`, `AddString`): 
 ```
 myJSON.AddFloat("myFloat", 24.68); 
+```
+To remove a variable from the JSON (`RemoveBool`, `RemoveInt`, `RemoveFloat`, `RemoveString`)
+```
+myJSON.RemoveBool("myBool"); 
 ```
 ---
 </details> 
