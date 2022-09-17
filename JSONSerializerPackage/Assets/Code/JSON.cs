@@ -174,7 +174,7 @@ namespace JSON
 			}
 			else
 			{
-				Debug.LogError($"ERROR: No variable names {variableName} found! returning 'false' instead");
+				Debug.LogError($"ERROR: No variable named {variableName} found! returning 'false' instead");
 				return false;
 			}
 		}
@@ -199,7 +199,7 @@ namespace JSON
 			}
 			else
 			{
-				Debug.LogError($"ERROR: No variable names {variableName} found! returning '0' instead");
+				Debug.LogError($"ERROR: No variable named {variableName} found! returning '0' instead");
 				return 0;
 			}
 		}
@@ -224,7 +224,7 @@ namespace JSON
 			}
 			else
 			{
-				Debug.LogError($"ERROR: No variable names '{variableName}' found! returning '0.0f' instead");
+				Debug.LogError($"ERROR: No variable named '{variableName}' found! returning '0.0f' instead");
 				return 0.0f;
 			}
 		}
@@ -249,7 +249,7 @@ namespace JSON
 			}
 			else
 			{
-				Debug.LogError($"ERROR: No variable names '{variableName}' found! returning NULL instead");
+				Debug.LogError($"ERROR: No variable named '{variableName}' found! returning NULL instead");
 				return null;
 			}
 		}
@@ -273,7 +273,7 @@ namespace JSON
 
 			if (!found)
 			{
-				Debug.LogError($"ERROR: No variable names {variableName} found!");
+				Debug.LogError($"ERROR: No variable named {variableName} found!");
 			}
 		}
 
@@ -292,7 +292,7 @@ namespace JSON
 
 			if (!found)
 			{
-				Debug.LogError($"ERROR: No variable names {variableName} found!");
+				Debug.LogError($"ERROR: No variable named {variableName} found!");
 			}
 		}
 
@@ -311,7 +311,7 @@ namespace JSON
 
 			if (!found)
 			{
-				Debug.LogError($"ERROR: No variable names {variableName} found!");
+				Debug.LogError($"ERROR: No variable named {variableName} found!");
 			}
 		}
 
@@ -330,7 +330,7 @@ namespace JSON
 
 			if (!found)
 			{
-				Debug.LogError($"ERROR: No variable names {variableName} found!");
+				Debug.LogError($"ERROR: No variable named {variableName} found!");
 			}
 		}
 
@@ -340,31 +340,126 @@ namespace JSON
 
 		public void AddBool(string newItemName, bool newItemValue)
 		{
+			for (int i = 0; i < boolList.Count; i++)
+			{
+				if (boolList[i].name == newItemName)
+				{
+					Debug.LogError($"ERROR: There is already a boolean named {newItemValue} in {jsonFile.name}.json!");
+					return; 
+				}
+			}
+
 			boolList.Add(new JSONBoolean(newItemName, newItemValue));
 		}
 
 		public void AddInt(string newItemName, int newItemValue)
 		{
+			for (int i = 0; i < intList.Count; i++)
+			{
+				if (intList[i].name == newItemName)
+				{
+					Debug.LogError($"ERROR: There is already a integer named {newItemValue} in {jsonFile.name}.json!");
+					return;
+				}
+			}
+
 			intList.Add(new JSONInteger(newItemName, newItemValue));
 		}
 
 		public void AddFloat(string newItemName, float newItemValue)
 		{
+			for (int i = 0; i < floatList.Count; i++)
+			{
+				if (floatList[i].name == newItemName)
+				{
+					Debug.LogError($"ERROR: There is already a float named {newItemValue} in {jsonFile.name}.json!");
+					return;
+				}
+			}
+
 			floatList.Add(new JSONFloat(newItemName, newItemValue));
 		}
 
 		public void AddString(string newItemName, string newItemValue)
 		{
+			for (int i = 0; i < stringList.Count; i++)
+			{
+				if (stringList[i].name == newItemName)
+				{
+					Debug.LogError($"ERROR: There is already a string named {newItemValue} in {jsonFile.name}.json!");
+					return;
+				}
+			}
+
 			stringList.Add(new JSONString(newItemName, newItemValue));
 		}
 
 		#endregion Add Functions 
+		
+		#region Remove Functions 
 
+		public void RemoveBool(string variableName)
+		{
+			for (int i = 0; i < boolList.Count; i++)
+			{
+				if (boolList[i].name == variableName)
+				{
+					boolList.Remove(boolList[i]);
+					return; 
+				}
+			}
+
+			Debug.LogError($"ERROR: No variable named {variableName} found!");
+		}
+
+		public void RemoveInt(string variableName)
+		{
+			for (int i = 0; i < intList.Count; i++)
+			{
+				if (intList[i].name == variableName)
+				{
+					intList.Remove(intList[i]);
+					return;
+				}
+			}
+
+			Debug.LogError($"ERROR: No variable named {variableName} found!");
+		}
+
+		public void RemoveFloat(string variableName)
+		{
+			for (int i = 0; i < floatList.Count; i++)
+			{
+				if (floatList[i].name == variableName)
+				{
+					floatList.Remove(floatList[i]);
+					return;
+				}
+			}
+
+			Debug.LogError($"ERROR: No variable named {variableName} found!");
+		}
+
+		public void RemoveString(string variableName)
+		{
+			for (int i = 0; i < stringList.Count; i++)
+			{
+				if (stringList[i].name == variableName)
+				{
+					stringList.Remove(stringList[i]);
+					return;
+				}
+			}
+
+			Debug.LogError($"ERROR: No variable named {variableName} found!");
+		}
+
+		#endregion Remove Functions 
 	}
 
 	#region JSON Variables
 
-	[System.Serializable]
+	[Serializable]
 	public class JSONBoolean
 	{
 		public string name;
@@ -377,7 +472,7 @@ namespace JSON
 		}
 	}
 
-	[System.Serializable]
+	[Serializable]
 	public class JSONInteger
 	{
 		public string name;
@@ -390,7 +485,7 @@ namespace JSON
 		}
 	}
 
-	[System.Serializable]
+	[Serializable]
 	public class JSONFloat
 	{
 		public string name;
@@ -403,7 +498,7 @@ namespace JSON
 		}
 	}
 
-	[System.Serializable]
+	[Serializable]
 	public class JSONString
 	{
 		public string name;
