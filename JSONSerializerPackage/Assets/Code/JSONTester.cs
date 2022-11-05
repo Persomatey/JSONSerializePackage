@@ -15,12 +15,23 @@ namespace JSON
 		[SerializeField] TextAsset readFile;
 		[SerializeField] TextAsset writeFile;
 
+		[Header("Debug Stuff")]
+		public string[] debugLines; 
+
+		private void Start()
+		{
+			//JSON tempJSON = new PersistentJSON(readFile);
+			//tempJSON.Test();
+			//tempJSON.Test(true); 
+		}
+
 		public void ReadExample()
 		{
 			JSON readJSON = new JSON(readFile);
 
-			Debug.Log($"Data read from {readFile.name}.json:\n" + readJSON.ToString());
-			Debug.Log($"Read myStr: {readJSON.GetString("myStr")}"); 
+			debugLines = readJSON.debugLines;
+
+			Debug.Log($"Data read from {readFile.name}.json\n" + readJSON.ToString());
 		}
 
 		public void WriteExample()
@@ -30,7 +41,7 @@ namespace JSON
 			writeJSON.AddBool("myBool", true);
 			writeJSON.AddInt("myInt", 987);
 			writeJSON.AddFloat("myFloat", 654.321f);
-			writeJSON.AddString("myStr", "What's up, World!");
+			writeJSON.AddString("myStr", "What's up, World?");
 
 			writeJSON.SetBool("myBool", false);
 

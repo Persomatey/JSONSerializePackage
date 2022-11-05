@@ -15,12 +15,19 @@ namespace JSON
 	[Serializable]
 	public class JSON
 	{
-		List<JSONBoolean> boolList;
-		List<JSONInteger> intList;
-		List<JSONFloat> floatList;
-		List<JSONString> stringList;
+		protected List<JSONBoolean> boolList;
+		protected List<JSONInteger> intList;
+		protected List<JSONFloat> floatList;
+		protected List<JSONString> stringList;
 
-		TextAsset jsonFile = null;
+		protected List<JSONBoolean[]> boolArrList; 
+		protected List<JSONInteger[]> intArrList; 
+		protected List<JSONFloat[]> floatArrList; 
+		protected List<JSONString[]> stringArrList;
+
+		protected TextAsset jsonFile = null;
+
+		public string[] debugLines; 
 
 		public JSON()
 		{
@@ -82,16 +89,26 @@ namespace JSON
 			return str;
 		}
 
-		void ParseJSON(TextAsset jsonFile)
+		protected virtual void ParseJSON(TextAsset jsonFile)
 		{
 			boolList = new List<JSONBoolean>();
 			intList = new List<JSONInteger>();
 			floatList = new List<JSONFloat>();
 			stringList = new List<JSONString>();
 			this.jsonFile = jsonFile;
+			string jsonText = jsonFile.text; 
 
-			string[] lines = jsonFile.text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+			// Check if the json is a one line json. If so, format. 
+			if (lineCount(jsonText) == 1) 
+			{
+				jsonText = formatString(jsonText); 
+			}
+
+			string[] lines = jsonText.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+			//string[] lines = jsonFile.text.Split(new string[] { "," }, StringSplitOptions.None); 
 			lines[lines.Length - 2] = (lines[lines.Length - 2].EndsWith(",")) ? lines[lines.Length - 2] : lines[lines.Length - 2] + ",";
+
+			debugLines = lines; 
 
 			for (int i = 1; i < lines.Length - 1; i++)
 			{
@@ -125,10 +142,88 @@ namespace JSON
 					lineSplit[1] = lineSplit[1].Replace("\"", "");
 					AddString(lineSplit[0], lineSplit[1]);
 				}
+
+				//// If it's an array 
+				//if (lineSplit[1].Contains("["))
+				//{
+				//	// Check if it's a one line array. If so, format it. 
+				//	if (lineSplit[1].Contains("]"))
+				//	{
+				//		lineSplit[i] = formatArray(lineSplit[i]); 
+				//	}
+
+				//	//string[] arrLines = 
+				//}
 			}
 		}
 
-		public void WriteToFile()
+		int lineCount(string str)
+		{
+			int ret = 1;
+
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (str[i] == '\n')
+				{
+					ret++;
+				}
+			}
+
+			return ret; 
+		} 
+
+		string formatString(string str)
+		{
+			string ret = "";
+			bool midQuote = false; 
+
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (str[i] == '"')
+				{
+					midQuote = !midQuote; 
+				}
+				if (str[i] == '{')
+				{
+					ret += str[i] + "\n"; 
+				}
+				else if (str[i] == '}')
+				{
+					ret += "\n" + str[i];
+				}
+				else if (str[i] == ',' && !midQuote)
+				{
+					ret += str[i] + "\n";
+				}
+				else if (str[i] == '[')
+				{
+					ret += str[i] + "\n"; 
+				}
+				else if (str[i] == ']')
+				{
+					ret += "\n" + str[i]; 
+				}
+				else
+				{
+					ret += str[i];
+				}
+			}
+
+			ret = ret.Replace("\n ", "\n");
+
+			return ret; 
+		} 
+
+		//string formatArray(string str)
+		//{
+		//	string ret = "";
+
+			
+
+		//	return ret; 
+		//}
+
+		public virtual void WriteToFile()
 		{
 			if (jsonFile == null)
 			{
@@ -140,16 +235,16 @@ namespace JSON
 			EditorUtility.SetDirty(jsonFile);
 		}
 
-		public void WriteToFile(TextAsset jsonFile)
+		public virtual void WriteToFile(TextAsset jsonFile)
 		{
-			if (jsonFile != null)
+			if (this.jsonFile != null && this.jsonFile != jsonFile)
 			{
-				Debug.LogError($"ERROR: Object already has a JSON TextAsset file: '{jsonFile.name}.json'"); 
+				Debug.LogError($"ERROR: Object already has a JSON TextAsset file: '{this.jsonFile.name}.json'"); 
 				return;
 			}
 
 			File.WriteAllText(AssetDatabase.GetAssetPath(jsonFile), ToString());
-			EditorUtility.SetDirty(jsonFile);
+			EditorUtility.SetDirty(this.jsonFile);
 		}
 
 		#region Get Funcitons
