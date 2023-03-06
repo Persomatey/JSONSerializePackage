@@ -2,5 +2,6 @@
     "myBool": true,
     "myInt": 123,
     "myFloat": 456.456,
-    "myStr": "Hello, World!"
+    "myStr": "Hello, World!",
+    "myBoolArr": [ true, false ]
 }

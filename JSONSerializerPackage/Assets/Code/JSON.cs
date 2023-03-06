@@ -20,10 +20,10 @@ namespace JSON
 		protected List<JSONFloat> floatList;
 		protected List<JSONString> stringList;
 
-		protected List<JSONBoolean[]> boolArrList; 
-		protected List<JSONInteger[]> intArrList; 
-		protected List<JSONFloat[]> floatArrList; 
-		protected List<JSONString[]> stringArrList;
+		protected List<JSONBooleanArray> boolArrList; 
+		//protected List<JSONIntegerArray> intArrList; 
+		//protected List<JSONFloatArray> floatArrList; 
+		//protected List<JSONStringArray> stringArrList;
 
 		protected TextAsset jsonFile = null;
 
@@ -35,6 +35,8 @@ namespace JSON
 			intList = new List<JSONInteger>();
 			floatList = new List<JSONFloat>();
 			stringList = new List<JSONString>();
+
+			boolArrList = new List<JSONBooleanArray>(); 
 		}
 
 		public JSON(TextAsset jsonFile)
@@ -43,6 +45,9 @@ namespace JSON
 			intList = new List<JSONInteger>();
 			floatList = new List<JSONFloat>();
 			stringList = new List<JSONString>();
+
+			boolArrList = new List<JSONBooleanArray>();
+
 			this.jsonFile = jsonFile;
 
 			ParseJSON(jsonFile);
@@ -76,6 +81,15 @@ namespace JSON
 				list.Add($"    \"{stringList[i].name}\": \"{stringList[i].value}\"");
 			}
 
+			Debug.Log("boolArrList.Count = " + boolArrList.Count); 
+
+			// Print bool arrays 
+			for (int i = 0; i < boolArrList.Count; i++)
+			{
+				Debug.Log("Printing " + boolArrList[i].name); 
+				list.Add($"    \"{boolArrList[i].name}\": {boolArrList[i].value}"); 
+			}
+
 			// Make string 
 			string str = "{\n";
 
@@ -105,7 +119,6 @@ namespace JSON
 			}
 
 			string[] lines = jsonText.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-			//string[] lines = jsonFile.text.Split(new string[] { "," }, StringSplitOptions.None); 
 			lines[lines.Length - 2] = (lines[lines.Length - 2].EndsWith(",")) ? lines[lines.Length - 2] : lines[lines.Length - 2] + ",";
 
 			debugLines = lines; 
@@ -118,19 +131,19 @@ namespace JSON
 				lineSplit[0] = lineSplit[0].Replace("\"", "");
 				lineSplit[1] = lineSplit[1].Substring(1, lineSplit[1].Length - 2);
 
-				// If it's a boolean
+				// If it's a boolean 
 				if (lineSplit[1] == "true" || lineSplit[1] == "false")
 				{
 					AddBool(lineSplit[0], Convert.ToBoolean(lineSplit[1]));
 				}
 
-				// If it's an int 
+				// If it's an integer 
 				if (int.TryParse(lineSplit[1], out int num))
 				{
 					AddInt(lineSplit[0], num);
 				}
 
-				// If it's a float 
+				// If it's a floating point 
 				if (lineSplit[1].Contains(".") && float.TryParse(lineSplit[1], out float fl))
 				{
 					AddFloat(lineSplit[0], fl);
@@ -143,18 +156,49 @@ namespace JSON
 					AddString(lineSplit[0], lineSplit[1]);
 				}
 
-				//// If it's an array 
-				//if (lineSplit[1].Contains("["))
-				//{
-				//	// Check if it's a one line array. If so, format it. 
-				//	if (lineSplit[1].Contains("]"))
-				//	{
-				//		lineSplit[i] = formatArray(lineSplit[i]); 
-				//	}
+				// If it's an array 
+				if (lineSplit[1].Contains("["))
+				{
+					// Check if it's a one line array -- if so, format it 
+					if (lineSplit[1].Contains("]"))
+					{
+						lineSplit[1] = formatArray(lineSplit[1]);
+					}
 
-				//	//string[] arrLines = 
-				//}
+					// Separate out values of array 
+					string[] arrSplit = lineSplit[1].Split(new string[] { "\n" }, StringSplitOptions.None);
+					string[] arr = new string[arrSplit.Length - 2];
+
+					for (int j = 0; j < arr.Length; j++)
+					{
+						arr[j] = arrSplit[j + 1];
+						arr[j] = arr[j].Replace(",", ""); 
+						arr[j] = arr[j].Replace(" ", "");
+					}
+
+					// If it's an array of booleans 
+					if (arr[0] == "true" || arrSplit[1] == "false")
+					{
+						bool[] boolArr = new bool[arr.Length]; 
+						for (int j = 0; j < arr.Length; j++)
+						{
+							boolArr[j] = Convert.ToBoolean( arr[j] );
+						}
+
+						AddBoolArray(lineSplit[0], boolArr); 
+					}
+				}
 			}
+		}
+
+		void ReadOutArray(string[] arr)
+		{
+			string str = ""; 
+			for (int i = 0; i < arr.Length; i++)
+			{
+				str += arr[i] + "\n"; 
+			}
+			Debug.Log(str); 
 		}
 
 		int lineCount(string str)
@@ -212,16 +256,37 @@ namespace JSON
 			ret = ret.Replace("\n ", "\n");
 
 			return ret; 
-		} 
+		}
 
-		//string formatArray(string str)
-		//{
-		//	string ret = "";
+		string formatArray(string str)
+		{
+			string ret = "";
 
-			
+			// Loop through it 
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (str[i] == '[') 
+				{
+					ret += str[i] + "\n"; 
+				}
+				else if (str[i] == ']')
+				{
+					ret += "\n" + str[i]; 
+				}
+				else if (str[i] == ',')
+				{
+					ret += str[i] + "\n"; 
+				}
+				else
+				{
+					ret += str[i]; 
+				}
+			}
 
-		//	return ret; 
-		//}
+			ret = ret.Replace("\n ", "\n");
+
+			return ret;
+		}
 
 		public virtual void WriteToFile()
 		{
@@ -489,6 +554,20 @@ namespace JSON
 			stringList.Add(new JSONString(newItemName, newItemValue));
 		}
 
+		public void AddBoolArray(string newItemName, bool[] newItemValue)
+		{
+			for (int i = 0; i < boolList.Count; i++)
+			{
+				if (boolList[i].name == newItemName)
+				{
+					Debug.LogError($"ERROR: There is already a array named {newItemValue} in {jsonFile.name}.json!");
+					return; 
+				}
+			}
+
+			boolArrList.Add(new JSONBooleanArray(newItemName, newItemValue));
+		}
+
 		#endregion Add Functions 
 		
 		#region Remove Functions 
@@ -600,6 +679,21 @@ namespace JSON
 		public string value;
 
 		public JSONString(string name, string value)
+		{
+			this.name = name;
+			this.value = value;
+		}
+	}
+
+	// Arrays 
+
+	[Serializable]
+	public class JSONBooleanArray
+	{
+		public string name;
+		public bool[] value;
+
+		public JSONBooleanArray(string name, bool[] value)
 		{
 			this.name = name;
 			this.value = value;
